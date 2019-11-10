@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Do To Do List",
+    "description": "Do To Do List App with React Native",
     "slug": "to-do-list",
     "privacy": "public",
     "sdkVersion": "35.0.0",
