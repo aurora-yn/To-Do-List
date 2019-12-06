@@ -1,17 +1,26 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, TextInput } from "react-native";
+import PropTypes from "prop-types";
 
 const { height, width } = Dimensions.get("window");
 
 export default class ToDo extends React.Component{
-  state = {
-    isEditing: false,
-    isCompleted: false,
-    toDoValue: ""
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEditing: false,
+      toDoValue: props.text
+    };
+  }
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired
+  }
   render() {
     const { isEditing, isCompleted, toDoValue } = this.state;
-    const { text } = this.props;
+    const { text, id, deleteTodo } = this.props;
     return(
       <View style={styles.container}>
         <View style={styles.column}>
@@ -26,9 +35,9 @@ export default class ToDo extends React.Component{
           {isEditing ? (
             <TextInput 
               style={[
-                  styles.text,
-                  styles.input, 
-                  isCompleted ? styles.completedText : styles.uncompletedText
+                styles.text,
+                styles.input, 
+                isCompleted ? styles.completedText : styles.uncompletedText
               ]} 
               value={toDoValue} 
               multiline={true}
@@ -61,7 +70,7 @@ export default class ToDo extends React.Component{
                 <Text style={styles.actionText}>📝</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPressOut={() => deleteTodo(id) }>
               <View style={styles.actionContainer}>
                 <Text style={styles.actionText}>🗑</Text>
               </View>
@@ -79,10 +88,8 @@ export default class ToDo extends React.Component{
     });
   };
   _startEditing = () => {
-    const {text} = this.props;
     this.setState({
-      isEditing: true,
-      toDoValue: text
+      isEditing: true
     })
   };
   _finishEdifing = () => {

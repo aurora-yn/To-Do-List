@@ -1,5 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, View, StatusBar, TextInput, Dimensions, Platform, ScrollView } from "react-native";
+import { StyleSheet, Text, View, 
+  StatusBar, TextInput, Dimensions, 
+  Platform, ScrollView 
+} 
+  from "react-native";
 import AppLoading from "expo";
 import uuidv1 from "uuid/v1";
 import ToDo from "./ToDo";
@@ -10,12 +14,10 @@ export default class App extends React.Component {
   state = {
     newToDo: "",
     loadedToDos: false,
-    toDos: {
-
-    }
+    toDos: {}
   };
   componentDidMount = () => {
-    this._loadTodos;
+    this._loadTodos();
   };
   render() { 
     const { newToDo, loadedToDos, toDos } = this.state;
@@ -31,16 +33,20 @@ export default class App extends React.Component {
           <TextInput 
             style={styles.input} 
             placeholder={"New to do"}
-            placeholderTextColor={"#999"}
             value={newToDo} 
             onChangeText={this._controlNewToDo}
+            placeholderTextColor={"#999"}
             returnKeyType={"done"}
             autoCorrect={false}
             onSubmitEditing={this._addToDo}
           />
           <ScrollView contentContainerStyle={styles.todo}>
+            {/* Array */}
             {/* {toDos.map(todo => <ToDo />)} */}
-            {Object.values(toDos).map(toDo => <ToDo key={toDo.id} {...toDo} />)}
+            {/* Object */}
+            {Object.values(toDos).map(toDo => (
+              <ToDo key={toDo.id} {...toDo} deleteTodo={this._deleteToDo} />
+            ))}
           </ScrollView>
         </View>
       </View>
@@ -57,12 +63,12 @@ export default class App extends React.Component {
     });
   };
   _addToDo = () => {
-    const { newToDo } = this.setState;
-    if( newToDo !== "") {
+    const { newToDo } = this.state;
+    if(newToDo !== "") {
       this.setState(prevState => {
         const ID = uuidv1();
-        const newToDoObj = {
-          [ID] : {
+        const newToDoObject = {
+          [ID]: {
             id: ID,
             isCompleted: false,
             text: newToDo,
@@ -74,14 +80,25 @@ export default class App extends React.Component {
           newToDo: "",
           toDos: {
             ...prevState.toDos,
-            ...newToDoObj
+            ...newToDoObject
           }
         };
         return { ...newState };
       });
     }
   };
-}
+  _deleteToDo = (id) => {
+    this.setState(prevState => {
+      const toDos = prevState.toDos;
+      delete toDos[id];
+      const newState = {
+        ... prevState,
+        ... toDos
+      }
+      return { ... newState };
+    });
+  };
+};
 
 const styles = StyleSheet.create({
   container: {
